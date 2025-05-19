@@ -53,4 +53,16 @@ OPENAI_API_KEY=your-api-key-here
 ```bash
 python AI_chat_log_summarizer.py
 ```
+3. The output will look like:
+
+```
+Processing chat logs in folder: chat_logs
+--------------------------------------------------
+chat1.txt
+Summary for file: chat1.txt
+- The conversation had 6 exchanges.
+- The user asked mainly about natural language processing and its applications.
+- Most common keywords: nlp, text, processing, natural, language
+--------------------------------------------------
+```
 
