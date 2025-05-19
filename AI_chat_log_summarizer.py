@@ -18,9 +18,16 @@ def split_messages(lines):
             ai_msgs.append(line[3:].strip())
     return user_msgs, ai_msgs
 
+def count_messages(user_list, ai_list):
+    return {
+        'User': len(user_list),
+        'AI': len(ai_list),
+        'Total': len(user_list) + len(ai_list)
+    }
+
 if __name__ == '__main__':
     file_path = 'chat.txt'
     data = read_chat_file(file_path)
     user_msgs, ai_msgs = split_messages(data)
-    print("User messages:", user_msgs)
-    print("AI messages:", ai_msgs)
+    stats = count_messages(user_msgs, ai_msgs)
+    print("Stats:", stats)
