@@ -1,3 +1,10 @@
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from collections import Counter
+nltk.download('punkt')
+nltk.download('stopwords')
+
 def read_chat_file(path):
     try:
         with open(path, 'r', encoding='utf-8') as f:
@@ -25,9 +32,20 @@ def count_messages(user_list, ai_list):
         'Total': len(user_list) + len(ai_list)
     }
 
+def extract_keywords(texts, top_n=5):
+    full_text = ' '.join(texts).lower()
+    tokens = word_tokenize(full_text)
+    filtered = [
+        word for word in tokens
+        if word.isalpha() and word not in stopwords.words('english')
+    ]
+    return Counter(filtered).most_common(top_n)
+
 if __name__ == '__main__':
     file_path = 'chat.txt'
     data = read_chat_file(file_path)
     user_msgs, ai_msgs = split_messages(data)
     stats = count_messages(user_msgs, ai_msgs)
     print("Stats:", stats)
+    keywords = extract_keywords(user_msgs + ai_msgs)
+    print("Keywords:", keywords)
