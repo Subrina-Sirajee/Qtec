@@ -1,0 +1,6 @@
+User: Good morning.
+AI: Good morning! How can I help you today?
+User: I am looking for information on natural language processing.
+AI: NLP is a branch of AI that focuses on enabling computers to understand and process human languages.
+User: What libraries can I use in Python for NLP?
+AI: You can use libraries like NLTK, spaCy, and HuggingFace Transformers.

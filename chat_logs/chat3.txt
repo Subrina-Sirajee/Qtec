@@ -1,0 +1,6 @@
+User: What's the difference between supervised and unsupervised learning?
+AI: Supervised learning uses labeled data while unsupervised learning works with unlabeled data to find patterns.
+User: Can you give examples?
+AI: Sure. A supervised example is email classification; an unsupervised one is customer segmentation.
+User: Thanks!
+AI: You're welcome!
