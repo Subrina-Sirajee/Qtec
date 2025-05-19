@@ -1,9 +1,32 @@
+import os
 import nltk
 from nltk.tokenize import TreebankWordTokenizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from collections import Counter
+from openai import OpenAI
+from dotenv import load_dotenv
+load_dotenv()
 nltk.download('stopwords', force=True)
+
+def llm_summarize(text, filename):
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    
+    prompt = f"""Summarize the main topic and purpose of this user-AI chat in one sentence:
+    
+    Chat from file {filename}:
+    {text}
+
+    Return a short summary like: "The user asked mainly about natural language processing and its applications."
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+    )
+
+    return response.choices[0].message.content.strip()
 
 def read_chat_file(path):
     try:
@@ -43,20 +66,29 @@ def extract_keywords(texts, top_n=5):
 
     return Counter(filtered).most_common(top_n)
 
-def make_summary(stats, keywords):
-    summary = []
-    summary.append(f"Total exchanges: {stats['Total']}")
-    summary.append(f"The User asked mainly about {keywords[0][0]} and its uses.")
-    keyword_list = ', '.join([word for word, _ in keywords])
-    summary.append(f"Most common keywords: {keyword_list}")
-    return '\n'.join(summary)
-
-if __name__ == '__main__':
-    file_path = 'chat.txt'
+def process_file(file_path):
     data = read_chat_file(file_path)
     user_msgs, ai_msgs = split_messages(data)
     stats = count_messages(user_msgs, ai_msgs)
-    print("Stats:", stats)
     keywords = extract_keywords(user_msgs + ai_msgs)
-    print("Keywords:", keywords)
-    print(make_summary(stats, keywords))
+    chat_text="\n".join(data)
+    summary_sentence=llm_summarize(chat_text,os.path.basename(file_path))
+    
+    return f""" Summary for file: {os.path.basename(file_path)}
+    - The conversation had {stats['Total']} exchanges.
+    - {summary_sentence}
+    - Most common keywords: {', '.join([w for w, _ in keywords])}
+    """
+
+def process_folder(folder_path):
+    print(f"Processing chat logs in folder: {folder_path}\n" + "-"*50)
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.txt'):
+            file_path = os.path.join(folder_path, filename)
+            summary = process_file(file_path)
+            print(summary)
+            print("-" * 50)
+
+if __name__ == '__main__':
+    folder_path = 'chat_logs'  
+    process_folder(folder_path)
