@@ -1,9 +1,9 @@
 import nltk
+from nltk.tokenize import TreebankWordTokenizer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from collections import Counter
-nltk.download('punkt')
-nltk.download('stopwords')
+nltk.download('stopwords', force=True)
 
 def read_chat_file(path):
     try:
@@ -34,12 +34,22 @@ def count_messages(user_list, ai_list):
 
 def extract_keywords(texts, top_n=5):
     full_text = ' '.join(texts).lower()
-    tokens = word_tokenize(full_text)
-    filtered = [
-        word for word in tokens
-        if word.isalpha() and word not in stopwords.words('english')
-    ]
+
+    tokenizer = TreebankWordTokenizer()
+    tokens = tokenizer.tokenize(full_text)
+
+    stop_words = set(stopwords.words('english'))
+    filtered = [word for word in tokens if word.isalpha() and word not in stop_words]
+
     return Counter(filtered).most_common(top_n)
+
+def make_summary(stats, keywords):
+    summary = []
+    summary.append(f"Total exchanges: {stats['Total']}")
+    summary.append(f"The User asked mainly about {keywords[0][0]} and its uses.")
+    keyword_list = ', '.join([word for word, _ in keywords])
+    summary.append(f"Most common keywords: {keyword_list}")
+    return '\n'.join(summary)
 
 if __name__ == '__main__':
     file_path = 'chat.txt'
@@ -49,3 +59,4 @@ if __name__ == '__main__':
     print("Stats:", stats)
     keywords = extract_keywords(user_msgs + ai_msgs)
     print("Keywords:", keywords)
+    print(make_summary(stats, keywords))
