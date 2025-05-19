@@ -58,7 +58,6 @@ python AI_chat_log_summarizer.py
 ```
 Processing chat logs in folder: chat_logs
 --------------------------------------------------
-chat1.txt
 Summary for file: chat1.txt
 - The conversation had 6 exchanges.
 - The user asked mainly about natural language processing and its applications.
